@@ -21,5 +21,8 @@ Aaggr_tbl <- mutate(Adata_tbl, mean = rowMeans(select(Adata_tbl, starts_with("q"
 Baggr_tbl <- mutate(Bdata_tbl, mean = rowMeans(select(Bdata_tbl, starts_with("q")))) %>% 
   select(parnum, stimver, mean) %>% 
   spread(stimver, mean)
- #Lines24-25: Using a join, add participant notes to each of your newlyaggregated tbls as a new column called notes.
-
+Aaggr_tbl <- left_join(Aaggr_tbl, Anotes_tbl, by = "parnum")
+Baggr_tbl <- left_join(Baggr_tbl, Bnotes_tbl, by = "parnum")
+Aaggr_tbl %>% full_join(Baggr_tbl, by = c("parnum"), suffix = c("_A", "_B")) %>% 
+  filter(is.na(notes_A), is.na(notes_B)) %>% 
+  select(-notes_A, -notes_B)
